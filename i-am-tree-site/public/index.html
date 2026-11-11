@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>I am Tree</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='13' r='11' fill='%231e86dd'/%3E%3Crect x='14' y='20' width='4' height='10' rx='1.5' fill='%234a3c3c'/%3E%3C/svg%3E">
+<meta name="description" content="A tree of projects. Each glowing branch is something I am working on.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --fog: #c4c7cc; --ink: #18202c; --ink-soft: #4a5565; --paper: #f4f5f7;
+    --blue: #1560bd; --glow: #7fe3ff; --night: #0d1826;
+    --serif: "Fraunces", Georgia, serif; --sans: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: var(--fog); color: var(--ink); font-family: var(--sans); }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 4px; }
+  #scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; opacity: 0; transition: opacity 1.2s ease; }
+  .ready #scene { opacity: 1; }
+
+  /* brand + index */
+  .brand { position: fixed; left: clamp(18px, 3vw, 40px); top: clamp(16px, 3vw, 34px); z-index: 300; max-width: 260px; transition: opacity .5s ease; }
+  .brand h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(28px, 3.2vw, 42px); line-height: 1; margin: 0; letter-spacing: -0.02em; }
+  .brand p { margin: 8px 0 0; color: var(--ink-soft); font-size: 14.5px; line-height: 1.4; }
+  #index-toggle { display: none; }
+  #index { list-style: none; margin: 26px 0 0; padding: 0; counter-reset: n; }
+  #index li { counter-increment: n; }
+  #index button { display: flex; align-items: baseline; gap: 10px; padding: 5px 0; font-size: 14px; color: var(--ink-soft); text-align: left; transition: color .2s ease, transform .2s ease; }
+  #index button::before { content: counter(n, decimal-leading-zero); font-size: 11px; font-variant-numeric: tabular-nums; color: #7d8794; letter-spacing: .04em; }
+  #index button:hover, #index button:focus-visible, #index button.on { color: var(--ink); transform: translateX(4px); }
+  #index button.on { font-weight: 600; }
+  .focused .brand p, .focused #index { opacity: .0; pointer-events: none; }
+  .brand p, #index { transition: opacity .4s ease; }
+
+  /* branch labels */
+  #labels { position: fixed; inset: 0; pointer-events: none; z-index: 100; overflow: hidden; }
+  .label { position: absolute; left: 0; top: 0; pointer-events: auto; display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+    padding: 5px 11px 5px 9px; border-radius: 999px; background: rgba(13, 24, 38, .82); color: #eef9ff; font-size: 12.5px; font-weight: 500; letter-spacing: .01em;
+    transition: opacity .35s ease, background .2s ease, box-shadow .2s ease; will-change: transform; opacity: 0; }
+  .label i { width: 7px; height: 7px; border-radius: 50%; background: var(--glow); box-shadow: 0 0 8px 2px rgba(127, 227, 255, .8); }
+  .label.hover, .label:focus-visible { background: #0d1826; box-shadow: 0 0 0 1.5px var(--glow), 0 0 22px rgba(127, 227, 255, .55); }
+
+  /* project panel */
+  #panel { position: fixed; z-index: 400; right: 0; top: 0; bottom: 0; width: min(940px, 62vw); background: var(--paper);
+    transform: translateX(104%); transition: transform .7s cubic-bezier(.2, .8, .2, 1); box-shadow: -18px 0 50px rgba(24, 32, 44, .16);
+    visibility: hidden; }
+  #panel-scroll { height: 100%; overflow-y: auto; display: flex; flex-direction: column; padding: clamp(28px, 4.2vw, 72px); }
+  #panel-scroll > * { width: 100%; max-width: 700px; }
+  .focused #panel { transform: none; visibility: visible; transition-delay: .25s; }
+  .panel-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 34px; }
+  .kicker { font-size: 11.5px; text-transform: uppercase; letter-spacing: .14em; color: var(--blue); font-weight: 600; }
+  .round { width: 36px; height: 36px; border-radius: 50%; border: 1px solid #cfd4db; display: inline-grid; place-items: center; font-size: 16px; line-height: 1; transition: background .2s, border-color .2s; }
+  .round:hover { background: #e7eaef; border-color: #b9c0ca; }
+  #panel h2 { font-family: var(--serif); font-weight: 600; font-size: clamp(36px, 4.4vw, 62px); line-height: 1.02; letter-spacing: -0.02em; margin: 0 0 18px; }
+  #panel-summary { font-size: clamp(17px, 1.5vw, 21px); line-height: 1.5; color: var(--ink); margin: 0 0 20px; }
+  #panel-body p { font-size: 16px; line-height: 1.65; color: var(--ink-soft); margin: 0 0 13px; }
+  #panel-facts { display: grid; grid-template-columns: max-content 1fr; gap: 10px 22px; margin: 14px 0 6px; padding: 18px 0 0; border-top: 1px solid #d6dae0; font-size: 15px; line-height: 1.5; }
+  #panel-facts:empty { display: none; }
+  #panel-facts dt { color: #7d8794; font-size: 11.5px; text-transform: uppercase; letter-spacing: .12em; font-weight: 600; padding-top: 3px; }
+  #panel-facts dd { margin: 0; color: var(--ink); }
+  #panel-tags { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; padding: 0; margin: 14px 0 26px; }
+  #panel-tags li { font-size: 12px; padding: 4px 10px; border-radius: 999px; background: #e3ecf7; color: #134b93; font-weight: 500; }
+  #panel-links { display: flex; flex-wrap: wrap; gap: 8px; }
+  .link { flex: 1 1 200px; gap: 14px; }
+  .link { display: flex; justify-content: space-between; align-items: center; padding: 13px 16px; border-radius: 10px; background: var(--night); color: #eef9ff; text-decoration: none; font-weight: 500; font-size: 14.5px; transition: background .2s, transform .2s; }
+  .link:hover { background: var(--blue); transform: translateY(-1px); }
+  .link + .link { background: transparent; color: var(--ink); border: 1px solid #cfd4db; }
+  .link + .link:hover { background: #e7eaef; }
+  .arrow { font-size: 15px; }
+  .panel-foot { margin-top: auto; padding-top: 30px; display: flex; align-items: center; gap: 10px; color: #7d8794; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+  .panel-foot span { margin-right: auto; }
+
+  #hint { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 200; font-size: 12.5px; color: var(--ink-soft); background: rgba(244, 245, 247, .78); padding: 7px 14px; border-radius: 999px; transition: opacity .6s ease; white-space: nowrap; opacity: 0; }
+  .ready #hint { opacity: 1; }
+  #hint.gone, .focused #hint { opacity: 0; pointer-events: none; }
+  #loader { position: fixed; inset: 0; z-index: 500; display: grid; place-items: center; align-content: center; gap: 14px; text-align: center; padding: 30px; color: var(--ink-soft); font-size: 14px; pointer-events: none; transition: opacity .6s ease; }
+  #loader-track { width: 160px; height: 2px; background: rgba(24, 32, 44, .15); overflow: hidden; border-radius: 2px; }
+  #loader-bar { height: 100%; background: var(--blue); transform: scaleX(0); transform-origin: left; transition: transform .2s ease; }
+  .ready #loader { opacity: 0; }
+  #hud { position: fixed; left: 12px; bottom: 12px; z-index: 600; margin: 0; padding: 10px 12px; border-radius: 8px; background: rgba(13, 24, 38, .88); color: #c9f2ff; font: 11.5px/1.5 ui-monospace, Menlo, Consolas, monospace; white-space: pre; }
+
+  @media (max-width: 819px) {
+    .brand { max-width: none; right: 18px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; }
+    .brand p { width: 100%; order: 3; }
+    #index-toggle { display: inline-block; font-size: 13px; padding: 7px 13px; border-radius: 999px; background: rgba(13, 24, 38, .86); color: #eef9ff; }
+    #index { order: 4; width: 100%; margin-top: 12px; padding: 10px 14px; background: rgba(244, 245, 247, .96); border-radius: 12px; display: none; }
+    .index-open #index { display: block; }
+    #index button { padding: 8px 0; font-size: 15px; width: 100%; }
+    .focused .brand { opacity: 0; pointer-events: none; }
+    #panel { top: auto; left: 0; width: auto; height: 74vh; border-radius: 18px 18px 0 0; transform: translateY(104%); box-shadow: 0 -18px 50px rgba(24, 32, 44, .18); }
+    #panel-scroll { padding: 22px 22px 26px; }
+    .panel-top { margin-bottom: 18px; }
+    #panel-facts { grid-template-columns: 1fr; gap: 2px; }
+    #panel-facts dd { margin-bottom: 10px; }
+    .label { font-size: 12px; padding: 5px 10px 5px 8px; }
+    #hint { bottom: 16px; font-size: 12px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition-duration: .01s !important; } }
+</style>
+</head>
+<body>
+<canvas id="scene" aria-label="A blue-leaved tree. Each glowing branch is a project."></canvas>
+
+<header class="brand">
+  <h1 id="brand-title">I am Tree</h1>
+  <button id="index-toggle" type="button">Projects</button>
+  <p id="brand-sub"></p>
+  <ol id="index" aria-label="Projects"></ol>
+</header>
+
+<div id="labels"></div>
+
+<aside id="panel" aria-hidden="true" aria-labelledby="panel-title"><div id="panel-scroll">
+  <div class="panel-top">
+    <span class="kicker" id="panel-kicker"></span>
+    <button class="round" id="panel-close" type="button" aria-label="Back to the tree">✕</button>
+  </div>
+  <h2 id="panel-title"></h2>
+  <p id="panel-summary"></p>
+  <div id="panel-body"></div>
+  <dl id="panel-facts"></dl>
+  <ul id="panel-tags"></ul>
+  <div id="panel-links"></div>
+  <div class="panel-foot">
+    <span id="panel-count"></span>
+    <button class="round" id="panel-prev" type="button" aria-label="Previous project">←</button>
+    <button class="round" id="panel-next" type="button" aria-label="Next project">→</button>
+  </div>
+</div></aside>
+
+<div id="hint">Drag to look around · scroll to zoom · click a glowing branch</div>
+<div id="loader"><span>Growing the tree</span><div id="loader-track"><div id="loader-bar"></div></div></div>
+<pre id="hud" hidden></pre>
+
+<script src="projects.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

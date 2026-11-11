@@ -1,0 +1,9 @@
+{
+  "name": "i-am-tree",
+  "private": true,
+  "scripts": {
+    "build": "esbuild src/main.js --bundle --minify --format=iife --target=es2021 --outfile=public/app.js",
+    "serve": "python -m http.server 8080 --directory public"
+  },
+  "devDependencies": { "esbuild": "^0.25.0", "three": "0.170.0" }
+}
