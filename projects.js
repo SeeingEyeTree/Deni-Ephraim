@@ -31,7 +31,7 @@ window.TREE_SITE = {
       short: "About me",
       slug: "about",
       status: "About me",
-      leaf: { image: "assets/pitt-seal.png", size: 1.1 },
+      leaf: { image: "assets/pitt-seal.png", size: 1 },
       summary: "Computer Engineering student at the University of Pittsburgh, working on robotics software, embedded systems and reinforcement learning.",
       body: [
         "I like building things that can be tested properly: path planning in ROS2, small reinforcement-learning agents, and most recently a large game-AI codebase built with AI coding agents, with a focus on clean architecture and rigorous verification.",
@@ -69,10 +69,58 @@ window.TREE_SITE = {
       ]
     },
 
+    {
+      title: "Game",
+      short: "Game",
+      slug: "game",
+      status: "Shipped",
+      leaf: { image: "assets/caffactory_can_purple.png", size: 1 },
+      year: "2026",
+      summary: "An automation simulation game with an in-game scripting language, playable in the browser.",
+      body: [
+        "Built in JavaScript and Electron with Claude Code. Players automate a factory by writing scripts in the game's own language. It has had 100 browser plays on itch.io.",
+        "Next step: training an agent to play it."
+      ],
+      tags: ["JavaScript", "Electron", "Game"],
+      links: [
+        { label: "Play on itch.io", url: "https://iam-tree.itch.io/caff-infinat" }
+      ]
+    },
+    {
+      title: "Pittsburgh Electric Propulsion",
+      short: "PEP",
+      slug: "pep",
+      status: "2023 - 2025",
+      year: "2023",
+      summary: "Software and controls for an autonomous electric boat, on the path planning team at the University of Pittsburgh.",
+      body: [
+        "Converted GPS and other sensor data into a unified frame of reference for the boat in ROS2, and coordinated with other teams so the path planning team received correct data.",
+        "Worked on the path planning team with 9 others."
+      ],
+      tags: ["ROS2", "Path planning", "Sensor fusion"],
+      links: [
+        { label: "Boat model (.c4d, Cinema 4D)", url: "assets/boat.c4d" }
+      ]
+    },
+
+    {
+      title: "Open Gym",
+      short: "Open Gym",
+      slug: "open-gym",
+      status: "2024 - 2026",
+      year: "2024",
+      summary: "Training pipelines for small models that solve Gymnasium environments, using Proximal Policy Optimization and Soft Actor-Critic.",
+      body: [
+        "Solved all of the Classic Control and Box2D Gymnasium environments, including Pendulum, MountainCar and BipedalWalker.",
+        "The code lives in my AI-suff repo, along with the saved models and render scripts."
+      ],
+      tags: ["Python", "TensorFlow", "Gymnasium", "NumPy", "PPO", "SAC"],
+      links: [
+        { label: "Code on GitHub", url: "https://github.com/SeeingEyeTree/AI-suff" }
+      ]
+    },
+
     /* ---- unlit branches: fill in and delete "stub: true" to light one ---- */
-    { stub: true, title: "", short: "", status: "", year: "", summary: "", body: [], tags: [], links: [], leaf: null },
-    { stub: true, title: "", short: "", status: "", year: "", summary: "", body: [], tags: [], links: [], leaf: null },
-    { stub: true, title: "", short: "", status: "", year: "", summary: "", body: [], tags: [], links: [], leaf: null },
     { stub: true, title: "", short: "", status: "", year: "", summary: "", body: [], tags: [], links: [], leaf: null },
     { stub: true, title: "", short: "", status: "", year: "", summary: "", body: [], tags: [], links: [], leaf: null },
     { stub: true, title: "", short: "", status: "", year: "", summary: "", body: [], tags: [], links: [], leaf: null },
